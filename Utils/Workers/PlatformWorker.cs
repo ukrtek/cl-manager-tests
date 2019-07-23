@@ -6,6 +6,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using NUnit.Framework;
+using OpenQA.Selenium;
 
 namespace Iqvia.E360.CodeListManager.AutomatedTests.Utils.Workers
 {
@@ -59,8 +61,11 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests.Utils.Workers
             _elements.FindElement("vocabularyDropdown").Click();
             var vocabulary = ConfigProvider.GetFromSection<Vocabulary>("vocabulary");
             _elements.FindElement(vocabulary.LocatorType, vocabulary.SelectorValue).Click();
-            var select = new SelectElement(_elements.FindElement("codelistTypeDropdown"));
-            select.SelectByText(codeList.Type);
+            if (!vocabulary.DataType.Equals("OMOP"))
+            {
+                var select = new SelectElement(_elements.FindElement("codelistTypeDropdown"));
+                            select.SelectByText(codeList.Type);
+            }
 
             var random = new Random();
             var codelistName = $"TestCodelist {random.Next(1, 9999)}";

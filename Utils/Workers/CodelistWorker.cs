@@ -43,7 +43,7 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests.Utils.Workers
             _elements.FindElement("globalSearchButton").Click();
         }
     
-        //wishlist: pass column name to params so so that no need to hardcode column name in the locator
+        //wishlist: pass column name to params so that no need to hardcode column name in the locator
         public void makeColumnSearch(string criteria)
         {
             var searchInput = _elements.GetVisibleElement("sourceNameColumnSearchInput");

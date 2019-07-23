@@ -26,8 +26,8 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests
         [OneTimeSetUp]
         public void init()
         {
-            //kill all Google Chrome processes
-            foreach (var processToKill in new[] { "chromedriver", "chrome" })
+            //kill all Google Chrome processes - windows only
+            /*foreach (var processToKill in new[] { "chromedriver", "chrome" })
                 foreach (var process in System.Diagnostics.Process.GetProcessesByName(processToKill))
                 {
                     try
@@ -43,7 +43,7 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests
                     {
                         Trace.WriteLine("access denied");
                     }
-                }
+                }*/
 
             var driverOption = ConfigProvider.GetFromSection<DriverOption>("driverOption");
             var codelist = ConfigProvider.GetFromSection<CodeList>("codelist");
@@ -80,7 +80,7 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests
         }
 
         [Test]
-        public void addCodeFromGlobalSearchSelect()
+        public void addCodeToFlatCodelistFromGlobalSearchSelect()
         //
         {
                 _codelistWorker.makeGlobalSearch("sickle cell"); 
@@ -102,7 +102,7 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests
         [OneTimeTearDown]
         public void Cleanup()
         {
-            // _driver.Quit();
+            //_driver.Quit();
         }
     }
 }
