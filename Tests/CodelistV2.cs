@@ -9,6 +9,7 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using System.Threading;
 using System.Diagnostics;
+using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
 namespace Iqvia.E360.CodeListManager.AutomatedTests
 {
@@ -22,6 +23,10 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests
         private PlatformWorker _platformWorker;
 
         private CodelistWorker _codelistWorker;
+
+        //values for column (source name, standard name columns) and global search in OMOP vocabulary
+        private const String TEXTSEARCH_QUERY_1 = "sickle cell";
+        private const String TEXTSEARCH_QUERY_2 = "iron deficiency anemia";
 
         [OneTimeSetUp]
         public void init()
@@ -83,21 +88,161 @@ namespace Iqvia.E360.CodeListManager.AutomatedTests
         public void addCodeToFlatCodelistFromGlobalSearchSelect()
         //
         {
-                _codelistWorker.makeGlobalSearch("sickle cell"); 
-                var codesCount = _codelistWorker.selectAndAddCode();
-                var countHeader = _codelistWorker.getCodeCountFromHeader();
+                _codelistWorker.makeGlobalSearch(TEXTSEARCH_QUERY_1); 
+                var codesCount = _codelistWorker.selectAndAdd1Code();
+                var countHeader = _codelistWorker.GetTotalCodeCount();
                 Assert.AreEqual(codesCount,countHeader);
         }
 
         [Test] 
+        //pre-condition of this test is that the codelist is empty
         public void addAllCodesFromColumnSearch()
         {
-            //make search in Source Name column
-            _codelistWorker.makeColumnSearch("iron deficiency anemia");
+            //make search in Source Name column and assign search results count to a variable
+            int searchResultsCount = _codelistWorker.MakeColumnSearch(TEXTSEARCH_QUERY_2);
             
-            //add all codes and compare with the codes count in codelist header
-            _codelistWorker.addAllResults();
+            //compare search results number with codes number displayed in the header after adding the results
+            Assert.AreEqual(searchResultsCount, _codelistWorker.TotalCodes);
+            
+            //clear search
+            _codelistWorker.ClearSearchWhenAllResultsAdded();
         }
+        
+        
+
+        [Test]
+        public void enableGroups()
+        {
+            //pre-condition 1: groups disabled - this is default by now, but we might need to check this condition
+            //pre-condition 2: codes were added to codelist
+            _codelistWorker.makeGlobalSearch(TEXTSEARCH_QUERY_1);
+            _codelistWorker.addAllResults();
+
+            //actions:
+            
+            //find out groups current state
+            _codelistWorker.IsGroupEnabled();
+            
+            //open Codelist Settings modal
+            _codelistWorker.OpenSettingsModal();
+            
+            //verify groups are disabled
+            _codelistWorker.SetGroupsStateAsRequired(false);
+            
+            //enable groups
+            _codelistWorker.SetGroupsStateAsRequired(true);
+            
+            //verify groups are on
+            Assert.IsTrue(_codelistWorker.GroupsOn);
+            
+            //verify code count in group is the same as codelist total value
+            Assert.AreEqual(_codelistWorker.GetCodeCountForGroup(), _codelistWorker.GetTotalCodeCount());
+        }
+
+        [Test]
+        public void addGroup()
+        {
+            //pre-condition 1: groups enabled
+            
+            //actions:
+            //click 'add group' button 
+            //type in a name for the new group
+            //hit [Enter] key
+            //verify new group displayed in the group list
+            //verify the group has the name entered by user
+
+        }
+        
+        
+
+        [Test]
+        public void addToExistingGroupFromColumnSearch()
+        {
+            //pre-condition 1: groups enabled
+            //pre-condition 2: add a new group (there should be an empty group in the codelist
+            
+            //actions:
+            //switch to Browse Codes
+            //clear searches if there are any uncleared 
+            //make column search in any column 
+            //save search results count
+            //click add all
+            //verify groups modal was opened
+            //click on the new empty group in the list
+            //click 'Add' button
+            //verify codes count in the group is the same as search result count saved
+
+        }
+
+        [Test]
+        public void addToNewGroupFromEqualsColumnSearch()
+            //pre-condition 1: groups enabled
+            //...
+        
+            //actions:
+            //...
+
+        {
+            
+        }
+        
+        [Test]
+        public void deleteGroup()
+        {
+
+        }
+        
+        [Test]
+        public void disableGroups()
+        {
+            
+        }
+        
+        [Test]
+        public void moveFromOneGroupToAnotherCodesFromSelection()
+        {
+            
+        }
+
+        [Test]
+        public void deleteCodesFromGroupBySearch()
+        {
+        }
+
+        [Test]
+        public void RenameCodelist()
+        {
+        }
+
+
+        [Test]
+        public void RenameGroup()
+        {
+        }
+
+        [Test]
+        public void SwitchFromMyCodelistToBrowseCodes()
+        {
+            
+        }
+
+        [Test]
+        public void ChangeTableColumnsSelection()
+        {
+            
+        }
+
+        [Test]
+        public void sortTableByColumn ()
+        {
+            
+        }
+
+
+
+
+
+
 
         [OneTimeTearDown]
         public void Cleanup()
